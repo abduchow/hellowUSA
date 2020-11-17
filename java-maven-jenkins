@@ -3,7 +3,9 @@ ENV container docker
 
 RUN yum install -y wget java-1.8.0-openjdk zip unzip
 RUN yum install java-devel -y
-RUN echo "JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")" | tee -a /etc/profile && source /etc/profile && echo $JAVA_HOME
+# RUN echo "JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")" | tee -a /etc/profile && source /etc/profile && echo $JAVA_HOME
+RUN echo 'export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64/bin:$JAVA_HOME' >>~/.bash_profile
+# RUN echo find /usr/lib/jvm/java-1.8* | head -n 3
 
 RUN yum install -y  initscripts && \
     cd /etc/yum.repos.d && \
@@ -17,10 +19,10 @@ RUN yum install git -y
 # get maven 3.2.2
 RUN wget --no-verbose -O /tmp/apache-maven-3.2.3.tar.gz https://mirrors.sonic.net/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
 RUN tar xzf /tmp/apache-maven-3.2.3.tar.gz -C /opt/
-RUN mv /opt/apache-maven-3.2.3 /opt/maven
+RUN ln -s /opt/apache-maven-3.2.3 /opt/maven
 RUN ln -s /opt/maven/bin/mvn /usr/local/bin
 RUN rm -f /tmp/apache-maven-3.2.3.tar.gz
-ENV MAVEN_HOME /opt/maven && / MAVEN /opt/maven/bin
+ENV MAVEN_HOME /opt/maven
 
 CMD ["/sbin/init"]
 
